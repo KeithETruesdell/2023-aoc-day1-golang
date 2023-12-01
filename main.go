@@ -7,12 +7,16 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"unicode"
 )
 
 const (
 	ex1  string = "input/ex1.txt"
 	prod string = "input/prod.txt"
+	ex2  string = "input/ex2.txt"
+)
+
+var (
+	digitList []string = []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"}
 )
 
 func main() {
@@ -62,26 +66,79 @@ func processData(fData []string) (ans int, err error) {
 	return ans, err
 }
 
+func convDigitStr(digitStr string) (dStr string) {
+	if len(digitStr) == 1 {
+		return digitStr
+	}
+	switch digitStr {
+	case "one":
+		return "1"
+	case "two":
+		return "2"
+	case "three":
+		return "3"
+	case "four":
+		return "4"
+	case "five":
+		return "5"
+	case "six":
+		return "6"
+	case "seven":
+		return "7"
+	case "eight":
+		return "8"
+	case "nine":
+		return "9"
+	}
+	fmt.Printf("  -- ERROR: Did not find dStr ( %v ) --  \n", digitStr)
+	return dStr
+}
+
 func findFirstNum(ln string) (fNum string) {
-	for i := 0; i < len(ln); i++ {
-		if unicode.IsNumber(rune(ln[i])) {
-			return string(ln[i])
+	var (
+		fNumIdx int = len(ln) + 1
+	)
+
+	for d := 0; d < len(digitList); d++ {
+		tmpIdx := strings.Index(ln, digitList[d])
+		if tmpIdx != -1 {
+			if tmpIdx < fNumIdx {
+				fNumIdx = tmpIdx
+				fNum = digitList[d]
+			}
 		}
 	}
-	return fNum
+
+	return convDigitStr(fNum)
 }
 
 func findLastNum(ln string) (lNum string) {
-	for i := len(ln) - 1; i >= 0; i-- {
-		if unicode.IsNumber(rune(ln[i])) {
-			return string(ln[i])
+	var (
+		lNumIdx int = -1
+	)
+
+	for d := 0; d < len(digitList); d++ {
+		tmpIdx := strings.LastIndex(ln, digitList[d])
+		if tmpIdx != -1 {
+			if tmpIdx > lNumIdx {
+				lNumIdx = tmpIdx
+				lNum = digitList[d]
+			}
 		}
 	}
-	return lNum
+
+	if len(lNum) < 1 {
+		fmt.Println(ln)
+		fmt.Println(lNumIdx)
+		fmt.Println(lNum)
+		fmt.Println("something wrong happend to lNum ...")
+	}
+	return convDigitStr(lNum)
 }
 
 func addNumList(numList []int) (ttl int) {
 	for i := 0; i < len(numList); i++ {
+		//fmt.Println(numList[i])
 		ttl = ttl + numList[i]
 	}
 
@@ -103,6 +160,8 @@ func getFile2Read(f int) (f2r string) {
 		f2r = prod
 	case 1:
 		f2r = ex1
+	case 2:
+		f2r = ex2
 	default:
 		f2r = ex1
 	}
